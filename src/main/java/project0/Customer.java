@@ -8,8 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Customer extends User {
+	private static final Logger LOGGER = LogManager.getLogger("com.revature.project0");
 
 	public Customer() {
 		super();
@@ -35,6 +38,7 @@ public class Customer extends User {
 			ResultSet rs = null;
 			Scanner sc = new Scanner(System.in);
 			int user = getUserId(c, username);
+			LOGGER.info("User: "+user+" is checking their balance");
 			ArrayList accountNums = new ArrayList();
 
 			PreparedStatement getBalances = c
@@ -71,6 +75,8 @@ public class Customer extends User {
 			}
 		} catch (Exception e) {
 			System.out.println("Input Error. Aborting process.");
+			LOGGER.error("Input error. Cancelled Balance Check");
+
 		}
 
 	}
@@ -82,6 +88,7 @@ public class Customer extends User {
 			float currentAmount = 0;
 			Scanner sc = new Scanner(System.in);
 			int user = getUserId(c, username);
+			LOGGER.info("User: "+user+" is depositing funds");
 
 			PreparedStatement getBalances = c
 					.prepareStatement("select accountnum, type from accounts where user_id=? and approved=1");
@@ -129,6 +136,8 @@ public class Customer extends User {
 			}
 		} catch (Exception e) {
 			System.out.println("Input error. Aborting Process");
+			LOGGER.error("Input error. Cancelled Deposit");
+
 		}
 	}
 
@@ -139,6 +148,7 @@ public class Customer extends User {
 			float currentAmount = 0;
 			Scanner sc = new Scanner(System.in);
 			int user = getUserId(c, username);
+			LOGGER.info("User: "+user+" is withdrawing funds");
 
 			PreparedStatement getBalances = c
 					.prepareStatement("select accountnum, type from accounts where user_id=? and approved=1");
@@ -192,6 +202,7 @@ public class Customer extends User {
 			}
 		} catch (Exception e) {
 			System.out.println("Input Error. Aborting Process.");
+			LOGGER.error("Input error. Cancelled withdraw");
 		}
 	}
 
@@ -200,6 +211,7 @@ public class Customer extends User {
 			Statement stmt = null;
 			Scanner sc = new Scanner(System.in);
 			int user = getUserId(c, username);
+			LOGGER.info("User: "+user+" is applying for a new bank account");
 
 			System.out.println("What kind of account would you like?\n1)Checkings\n2)Savings\n");
 			int acc = sc.nextInt();
@@ -224,10 +236,12 @@ public class Customer extends User {
 
 		} catch (Exception e) {
 			System.out.println("Input error. Aborting Process.");
+			LOGGER.error("User input error. Stopped account application.");
 		}
 	}
 
 	public void requestTransfer(Connection c, String username) throws SQLException {
+		try {
 		Statement stmt = null;
 		ResultSet rs = null;
 		float currentAmount = 0;
@@ -306,12 +320,17 @@ public class Customer extends User {
 			cstmt.setInt(4, transferToUser);
 			cstmt.execute();
 			c.commit();
+			LOGGER.info("User: "+user+" initiated a money transfer.");
 
+		}
+		}catch(Exception e) {
+			System.out.println("Invalid Input. Terminating Process");
+			LOGGER.error("Invalid input stopped the money transfer initiation");
 		}
 	}
 
 	public void acceptTransfer(Connection c, String username) throws SQLException {
-		
+		try {
 			int user = getUserId(c, username);
 			Scanner sc = new Scanner(System.in);
 			PreparedStatement stmt = c.prepareStatement(
@@ -360,19 +379,27 @@ public class Customer extends User {
 					cstmt.setDouble(3, amount);
 					cstmt.execute();
 					c.commit();
+					LOGGER.info("User: "+user+" accepted a money transfer");
+
 					
 				case 2:
 					stmt = c.prepareStatement("delete from transfers where transfer_id=?");
 					stmt.setInt(1, choice);
 					stmt.executeUpdate();
 					c.commit();
+					
 					break;
 				default:
 					System.out.println("Not a valid choice. Terminating Process.");
+
 				}
 
 			}
 		
+		}catch(Exception e) {
+			System.out.println("Not a valid choice. Terminating Process.");
+			LOGGER.error("Input error stopped money transfer accept/reject");
 		}
+	}
 	}
 

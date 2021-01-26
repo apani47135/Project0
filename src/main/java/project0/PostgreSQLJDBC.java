@@ -2,9 +2,13 @@ package project0;
 
 import java.sql.*;
 import java.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PostgreSQLJDBC {
+	private static final Logger LOGGER = LogManager.getLogger("com.revature.project0");
 	public static void main(String args[]) {
+		LOGGER.info("Program Started");
 		Connection c = null;
 		Customer customer;
 		Employee employee;
@@ -101,6 +105,7 @@ public class PostgreSQLJDBC {
 			}
 			c.close();
 			sc.close();
+			LOGGER.info("Program Ending.");
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
