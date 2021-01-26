@@ -248,7 +248,7 @@ public class Customer extends User {
 		if (accountNums.isEmpty()) {
 			System.out.println("You do not have an account open");
 		} else {
-			System.out.println("What accout would you like to transfer from?");
+			System.out.println("What account would you like to transfer from?");
 			int acc = sc.nextInt();
 			while (accountNums.contains(acc) == false) {
 				System.out.print("Not a valid account. Try again: ");
@@ -260,7 +260,7 @@ public class Customer extends User {
 			while (rs.next()) {
 				currentAmount = rs.getFloat(1);
 			}
-			System.out.print("How much would you like to withdraw? ");
+			System.out.print("How much would you like to transfer? ");
 			float amount = sc.nextFloat();
 			while (amount < 0 || amount > currentAmount) {
 				if (amount < 0) {
@@ -292,13 +292,87 @@ public class Customer extends User {
 				System.out.print("Not a valid account. Try again: ");
 				transferTo = sc.nextInt();
 			}
-			CallableStatement cstmt = c.prepareCall("CALL transfer(?,?,?)");
-			cstmt.setInt(1, user);
+			PreparedStatement getUser = c.prepareStatement("select user_id from accounts where accountnum=?;");
+			getUser.setInt(1, transferTo);
+			rs = getUser.executeQuery();
+			int transferToUser=0;
+			while(rs.next()) {
+				transferToUser=rs.getInt("user_id");
+			}
+			CallableStatement cstmt = c.prepareCall("CALL initiate_transfer(?,?,?,?)");
+			cstmt.setInt(1, acc);
 			cstmt.setInt(2, transferTo);
 			cstmt.setDouble(3, amount);
+			cstmt.setInt(4, transferToUser);
 			cstmt.execute();
 			c.commit();
 
 		}
 	}
-}
+
+	public void acceptTransfer(Connection c, String username) throws SQLException {
+		
+			int user = getUserId(c, username);
+			Scanner sc = new Scanner(System.in);
+			PreparedStatement stmt = c.prepareStatement(
+					"select transfer_id,from_account,amount from transfers where to_user=?;");
+			stmt.setInt(1, user);
+			ArrayList transfers = new ArrayList();
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				int transfer_id = rs.getInt("transfer_id");
+				int from_account = rs.getInt("from_account");
+				double amount = rs.getDouble("amount");
+				transfers.add(transfer_id);
+				System.out.println(transfer_id + ") From Account: " + from_account + " for the amount of $" + amount);
+			}
+			if (transfers.isEmpty() == true) {
+				System.out.println("You have no pending transfers.");
+			} else {
+				System.out.println("What transfer would you like to accept/decline? ");
+				int choice = sc.nextInt();
+				while (transfers.contains(choice) == false) {
+					System.out.println("Transfer doesn't exist. Try again: ");
+					choice = sc.nextInt();
+				}
+				System.out.println("1)Accept\n2)Decline\nEnter Choice: ");
+				int UserSelection = sc.nextInt();
+				while (UserSelection != 1 && UserSelection != 2) {
+					System.out.println("Invalid Choice. Try again: ");
+					UserSelection = sc.nextInt();
+				}
+				switch (UserSelection) {
+				case 1:
+					stmt = c.prepareStatement("select from_account,amount,to_account from transfers where transfer_id=?");
+					stmt.setInt(1, choice);
+					rs = stmt.executeQuery();
+					int transfer_from=0; 
+					int transfer_to=0;
+					double amount=0;
+					while(rs.next()) {
+						transfer_from = rs.getInt("from_account");
+						amount = rs.getDouble("amount");
+						transfer_to = rs.getInt("to_account");
+					}
+					CallableStatement cstmt = c.prepareCall("CALL transfer(?,?,?)");
+					cstmt.setInt(1, transfer_from);
+					cstmt.setInt(2, transfer_to);
+					cstmt.setDouble(3, amount);
+					cstmt.execute();
+					c.commit();
+					
+				case 2:
+					stmt = c.prepareStatement("delete from transfers where transfer_id=?");
+					stmt.setInt(1, choice);
+					stmt.executeUpdate();
+					c.commit();
+					break;
+				default:
+					System.out.println("Not a valid choice. Terminating Process.");
+				}
+
+			}
+		
+		}
+	}
+

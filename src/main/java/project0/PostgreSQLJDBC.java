@@ -34,7 +34,7 @@ public class PostgreSQLJDBC {
 						while (logged_in) {
 							String user = logInInfo[1];
 							System.out.print(
-									"1)Check Balance\n2)Deposit\n3)Withdraw\n4)Transfer\n5)Apply for Bank Account\n6)Log Out\n\nWhat would you like to do? ");
+									"1)Check Balance\n2)Deposit\n3)Withdraw\n4)Transfer\n5)Apply for Bank Account\n6)View Transfer Request\n7)Log Out\n\nWhat would you like to do? ");
 							int choiceSelect = sc.nextInt();
 							switch (choiceSelect) {
 							case 1:
@@ -53,6 +53,9 @@ public class PostgreSQLJDBC {
 								customer.apply(c, user);
 								break;
 							case 6:
+								customer.acceptTransfer(c, user);
+								break;
+							case 7:
 								logged_in = false;
 								break;
 							default:
