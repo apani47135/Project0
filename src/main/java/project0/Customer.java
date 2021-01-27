@@ -54,7 +54,7 @@ public class Customer extends User {
 			if (accountNums.isEmpty()) {
 				System.out.println("You do not have an account open");
 			} else {
-				System.out.println("What accout would you like to check?");
+				System.out.print("What accout would you like to check: ");
 				int acc = sc.nextInt();
 				while (accountNums.contains(acc) == false) {
 					System.out.print("Not a valid account. Try again: ");
@@ -105,14 +105,14 @@ public class Customer extends User {
 			if (accountNums.isEmpty()) {
 				System.out.println("You do not have an open account");
 			} else {
-				System.out.println("\n\nWhat account would you like to deposit funds into?");
+				System.out.print("\n\nWhat account would you like to deposit funds into: ");
 
 				int account = sc.nextInt();
 				while (accountNums.contains(account) == false) {
 					System.out.print("Not a valid account. Try again: ");
 					account = sc.nextInt();
 				}
-				System.out.print("\nHow much would you like to deposit? ");
+				System.out.print("\nHow much would you like to deposit: ");
 				float amount = sc.nextFloat();
 				while (amount < 0) {
 					System.out.print("Amount cannot be less than 0. Please enter valid amount: ");
@@ -166,7 +166,7 @@ public class Customer extends User {
 			if (accountNums.isEmpty()) {
 				System.out.println("You do not have an open account");
 			} else {
-				System.out.println("What account would you like to withdraw funds from?");
+				System.out.print("\nWhat account would you like to withdraw funds from: ");
 
 				int account = sc.nextInt();
 				while (accountNums.contains(account) == false) {
@@ -180,7 +180,7 @@ public class Customer extends User {
 				while (rs.next()) {
 					currentAmount = rs.getFloat(1);
 				}
-				System.out.print("How much would you like to withdraw? ");
+				System.out.print("How much would you like to withdraw: ");
 				float amount = sc.nextFloat();
 				while (amount < 0 || amount > currentAmount) {
 					if (amount < 0) {
@@ -346,7 +346,7 @@ public class Customer extends User {
 				System.out.println(transfer_id + ") From Account: " + from_account + " for the amount of $" + amount);
 			}
 			if (transfers.isEmpty() == true) {
-				System.out.println("You have no pending transfers.");
+				System.out.println("\nYou have no pending transfers.");
 			} else {
 				System.out.println("What transfer would you like to accept/decline? ");
 				int choice = sc.nextInt();

@@ -19,7 +19,6 @@ public class PostgreSQLJDBC {
 			Class.forName("org.postgresql.Driver");
 			c = DriverManager.getConnection("jdbc:postgresql://localhost/BankDatabase", "postgres", "Alex441011");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
 			System.out.println("Welcome to the bank!");
 			boolean flag = true;
 			boolean logged_in = true;
@@ -38,7 +37,7 @@ public class PostgreSQLJDBC {
 						while (logged_in) {
 							String user = logInInfo[1];
 							System.out.print(
-									"1)Check Balance\n2)Deposit\n3)Withdraw\n4)Transfer\n5)Apply for Bank Account\n6)View Transfer Request\n7)Log Out\n\nWhat would you like to do? ");
+									"\n1)Check Balance\n2)Deposit\n3)Withdraw\n4)Transfer\n5)Apply for Bank Account\n6)View Transfer Request\n7)Log Out\n\nWhat would you like to do? ");
 							int choiceSelect = sc.nextInt();
 							switch (choiceSelect) {
 							case 1:
@@ -71,8 +70,7 @@ public class PostgreSQLJDBC {
 						logged_in = true;
 						employee = new Employee();
 						while (logged_in) {
-							System.out.println("You are an Employee!");
-							System.out.println("1)View Transaction History\n2)Approve Accounts\n5)Log Out\n\nWhat would you like to do? ");
+							System.out.println("\n1)View Transaction History\n2)Approve Accounts\n3)View User Accounts\n4)Log Out\n\nWhat would you like to do? ");
 							int choiceSelect = sc.nextInt();
 							switch (choiceSelect) {
 							case 1:
@@ -81,7 +79,10 @@ public class PostgreSQLJDBC {
 							case 2:
 								employee.approveAccount(c);
 								break;
-							case 5:
+							case 3:
+								employee.checkAccounts(c);
+								break;
+							case 4:
 								logged_in = false;
 								break;
 							default:
@@ -107,9 +108,10 @@ public class PostgreSQLJDBC {
 			sc.close();
 			LOGGER.info("Program Ending.");
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.out.println ("Input Error. Terminating Program.");
+			LOGGER.error("Input Error on Main Menu. Terminating Program");
 			System.exit(0);
 		}
-		System.out.println("Operation done successfully");
+		System.out.println("Come back soon!");
 	}
 }

@@ -7,7 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class User {
+	private static final Logger LOGGER = LogManager.getLogger("com.revature.project0");
+
 	private int userId;
 	private String username;
 	private String password;
@@ -47,6 +52,7 @@ public class User {
 	}
 	
 	public String[] login(Connection c) throws SQLException {
+		try {
 		PreparedStatement getPassword = c.prepareStatement("select password, role from bankusers where username=?");
 		String pass = null;
 		String role = null;
@@ -70,6 +76,11 @@ public class User {
 		} else
 			System.out.println("Login Failed\n\n");
 		return new String[] { "false" };
+	}catch(Exception e) {
+		System.out.println("Input Error.");
+		LOGGER.error("Input Error on Main Screen");
+		return null;
+	}
 	}
 
 	public void createAccount(Connection c) throws SQLException {
@@ -80,13 +91,14 @@ public class User {
 		ArrayList users = new ArrayList();
 		while (rs.next()) {
 			String u = rs.getString(1);
-			users.add(u);
+			users.add(u.toLowerCase());
 		}
 
 		System.out.println("Create your account");
 		System.out.println("Enter a username: ");
 		String user = sc.next();
-		while (users.contains(user) == true) {
+		String testing = user.toLowerCase();
+		while (users.contains(testing.toLowerCase()) == true) {
 			System.out.print("Username taken. Try again: ");
 			user = sc.next();
 		}
