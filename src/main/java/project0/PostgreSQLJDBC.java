@@ -94,7 +94,7 @@ public class PostgreSQLJDBC {
 					break;
 				case 2:
 					sessionUser.createAccount(c);
-					flag=false;
+					flag=true;
 					break;
 				case 3:
 					flag = false;

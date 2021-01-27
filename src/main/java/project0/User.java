@@ -101,6 +101,7 @@ public class User {
 		while (users.contains(testing.toLowerCase()) == true) {
 			System.out.print("Username taken. Try again: ");
 			user = sc.next();
+			testing = user.toLowerCase();
 		}
 		System.out.println("Enter a password: ");
 		String password = sc.next();
