@@ -51,7 +51,7 @@ public class User {
 		this.role = role;
 	}
 	
-	public String[] login(Connection c) throws SQLException {
+	public static String[] login(Connection c) throws SQLException {
 		try {
 		PreparedStatement getPassword = c.prepareStatement("select password, role from bankusers where username=?");
 		String pass = null;
@@ -94,8 +94,8 @@ public class User {
 			users.add(u.toLowerCase());
 		}
 
-		System.out.println("Create your account");
-		System.out.println("Enter a username: ");
+		System.out.println("\nCreate your account!");
+		System.out.print("Enter a username: ");
 		String user = sc.next();
 		String testing = user.toLowerCase();
 		while (users.contains(testing.toLowerCase()) == true) {
@@ -103,7 +103,7 @@ public class User {
 			user = sc.next();
 			testing = user.toLowerCase();
 		}
-		System.out.println("Enter a password: ");
+		System.out.print("Enter a password: ");
 		String password = sc.next();
 
 		getUsers = c.prepareStatement("INSERT INTO public.bankusers(username,password,role) VALUES (?,?,'Customer');");

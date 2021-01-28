@@ -29,8 +29,9 @@ public class Employee extends User {
 			int user = rs.getInt(2);
 			int acc = rs.getInt(3);
 			double amount = rs.getDouble(4);
+			String formatted = String.format("%.2f", amount);
 
-			System.out.println("User " + user + " did a " + type + " for $" + amount + " on account " + acc);
+			System.out.println("User " + user + " did a " + type + " for $" + formatted + " on account " + acc);
 		}
 		System.out.println("\n");
 
@@ -73,7 +74,7 @@ public class Employee extends User {
 	}
 
 	public void checkAccounts(Connection c) throws SQLException {
-		//try {
+		try {
 		Scanner sc = new Scanner(System.in);
 		PreparedStatement stmt = c.prepareStatement("select userid from bankusers where role='Customer'");
 		ResultSet rs = stmt.executeQuery();
@@ -99,17 +100,19 @@ public class Employee extends User {
 			int num = rs.getInt(1);
 			String type = rs.getString(2);
 			double amount = rs.getDouble(3);
+			String formatted = String.format("%.2f", amount);
+
 			check.add(num);
-			System.out.println(type+ " Account: "+num+" has $"+amount);
+			System.out.println(type+ " Account: "+num+" has $"+formatted);
 
 		}
 		if(check.isEmpty()) {
 			System.out.println("This user has no active accounts.\n");
 		}
 		LOGGER.info("Employee checking accounts for user "+choice);
-//	}catch(Exception e) {
-//		System.out.println("Invalid Input. Terminating Process");
-//		LOGGER.error("Invalid Input. Terminating Process");
+	}catch(Exception e) {
+		System.out.println("Invalid Input. Terminating Process");
+		LOGGER.error("Invalid Input. Terminating Process");
 	}
 	}
-//}
+}

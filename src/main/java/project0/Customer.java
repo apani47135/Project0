@@ -67,7 +67,9 @@ public class Customer extends User {
 				cstmt.execute();
 
 				double amount = cstmt.getDouble(2);
-				System.out.println("\nAccount: " + acc + " has $" + amount);
+				String formatted = String.format("%.2f", amount);
+
+				System.out.println("\nAccount: " + acc + " has $" + formatted);
 				System.out.print("\n\n");
 
 				rs.close();
@@ -342,13 +344,15 @@ public class Customer extends User {
 				int transfer_id = rs.getInt("transfer_id");
 				int from_account = rs.getInt("from_account");
 				double amount = rs.getDouble("amount");
+				String formatted = String.format("%.2f", amount);
 				transfers.add(transfer_id);
-				System.out.println(transfer_id + ") From Account: " + from_account + " for the amount of $" + amount);
+				System.out.println();
+				System.out.println("Transfer "+transfer_id + ":\tFrom Account: " + from_account + " for the amount of $" + formatted);
 			}
 			if (transfers.isEmpty() == true) {
 				System.out.println("\nYou have no pending transfers.");
 			} else {
-				System.out.println("What transfer would you like to accept/decline? ");
+				System.out.print("\nWhat transfer would you like to accept/decline: ");
 				int choice = sc.nextInt();
 				while (transfers.contains(choice) == false) {
 					System.out.println("Transfer doesn't exist. Try again: ");
@@ -380,6 +384,7 @@ public class Customer extends User {
 					cstmt.execute();
 					c.commit();
 					LOGGER.info("User: "+user+" accepted a money transfer");
+					System.out.println("Tranfer Accepted!\n");
 
 					
 				case 2:
@@ -387,7 +392,8 @@ public class Customer extends User {
 					stmt.setInt(1, choice);
 					stmt.executeUpdate();
 					c.commit();
-					
+					//System.out.println("Tranfer Declined!\n");
+
 					break;
 				default:
 					System.out.println("Not a valid choice. Terminating Process.");
